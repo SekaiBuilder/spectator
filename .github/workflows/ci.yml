@@ -24,4 +24,4 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      - run: npm test -- --test-timeout=120000
+      - run: node --liftoff-only --test --test-timeout=120000 "test/*.test.js"
