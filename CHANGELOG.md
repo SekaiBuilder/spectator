@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.12.2 (2026-10-23)
 
 Windows support, checked in CI on Linux, macOS and Windows:
 

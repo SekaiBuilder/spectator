@@ -44,7 +44,7 @@ It works the same on code written by hand, by an AI, or inherited from someone e
 
 ## Install
 
-**VS Code extension.** Download `spectator-0.12.1.vsix` from the
+**VS Code extension.** Download the `.vsix` file from the
 [latest release](https://github.com/SekaiBuilder/spectator/releases/latest), then in VS Code open
 *Extensions → … → Install from VSIX*. Open any folder and click the shield in the activity bar.
 

@@ -25,4 +25,4 @@ body:
     id: version
     attributes:
       label: Spectator version and language / framework
-      placeholder: 0.12.1 · Python 3.12 · FastAPI
+      placeholder: 0.12.2 · Python 3.12 · FastAPI
