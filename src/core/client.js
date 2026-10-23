@@ -15,7 +15,7 @@ class EngineClient {
     this.pending = new Map();
     this.seq = 0;
     this.traceHandlers = null;
-    this.tracePid = null;
+    this.tracePids = new Set();
     this.useFlags = true;
     this.disposed = false;
   }
@@ -29,10 +29,10 @@ class EngineClient {
     child.on('message', (m) => {
       if (m.event) {
         const h = this.traceHandlers || {};
-        if (m.event === 'pid') this.tracePid = m.pid;
+        if (m.event === 'pid') this.tracePids.add(m.pid);
         else if (m.event === 'update' && h.onUpdate) h.onUpdate(m.data);
         else if (m.event === 'output' && h.onOutput) h.onOutput(m.data);
-        else if (m.event === 'exit') { this.traceHandlers = null; this.tracePid = null; h.onExit && h.onExit(m.data); }
+        else if (m.event === 'exit') { this.traceHandlers = null; this.tracePids.clear(); h.onExit && h.onExit(m.data); }
         return;
       }
       const p = this.pending.get(m.id);
@@ -85,13 +85,14 @@ class EngineClient {
   }
   trace(command, handlers = {}) {
     this.traceHandlers = handlers;
+    this.tracePids.clear(); // la ejecución anterior la detiene el motor al sustituirla
     this.call('trace', command).catch((e) => this.failTrace(handlers, e));
     return { stop: () => this.child && this.call('stopTrace').catch(() => {}) };
   }
-  /** El motor ya no puede detener el programa que lanzó: se termina desde aquí. */
+  /** El motor ya no puede detener el programa que lanzó: se termina desde aquí (el shell y cada programa observado). */
   stopOrphan() {
-    if (this.tracePid) killTree(this.tracePid, 'SIGKILL');
-    this.tracePid = null;
+    for (const pid of this.tracePids) killTree(pid, 'SIGKILL');
+    this.tracePids.clear();
   }
   /** Cierre definitivo: ninguna solicitud ni ejecución en vivo queda esperando una respuesta que ya no llegará. */
   dispose() {

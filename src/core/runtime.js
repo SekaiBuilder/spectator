@@ -64,7 +64,7 @@ const NOISE = /^(Debugger listening on|For help, see|Debugger attached|Waiting f
 
 /**
  * @param command texto que ejecuta el shell, o lista [ejecutable, ...argumentos] que se ejecuta sin shell
- * @param handlers {onUpdate({delta, totals}), onOutput(text), onExit({exitCode, signal, error, instrumentation, counts, …})}
+ * @param handlers {onUpdate({delta, totals}), onOutput(text), onPid(pid), onExit({exitCode, signal, error, instrumentation, counts, …})}
  * @returns {{stop: Function}}
  */
 function startTrace(root, command, irs, handlers = {}) {
@@ -125,8 +125,9 @@ function startTrace(root, command, irs, handlers = {}) {
   };
 
   const attach = (url) => {
-    let id = 0, timer = null, closing = false;
+    let id = 0, timer = null, closing = false, pidId = 0, knownPid = false;
     const s = wsConnect(url, (msg) => {
+      if (msg.id && msg.id === pidId) { const pid = msg.result && msg.result.result && msg.result.result.value; if (Number.isInteger(pid)) { knownPid = true; handlers.onPid && handlers.onPid(pid); } return; }
       if (msg.id && msg.result && Array.isArray(msg.result.result)) { readings++; ingest(msg.result.result); }
       if (msg.method === 'Runtime.executionContextDestroyed' && !closing) {
         // El proceso terminó y espera a que soltemos el inspector: última lectura y cerrar.
@@ -140,7 +141,11 @@ function startTrace(root, command, irs, handlers = {}) {
       s.send({ id: ++id, method: 'Profiler.enable' });
       s.send({ id: ++id, method: 'Profiler.startPreciseCoverage', params: { callCount: true, detailed: false } });
       s.send({ id: ++id, method: 'Runtime.runIfWaitingForDebugger' });
-      timer = setInterval(() => { if (!closing) s.send({ id: ++id, method: 'Profiler.takePreciseCoverage' }); }, 400);
+      // El pid de cada programa permite cerrarlo aunque desaparezca el proceso que lo lanzó (en Windows, cmd.exe).
+      // Al empezar, process aún no existe: se vuelve a preguntar en cada lectura hasta obtenerlo.
+      const askPid = () => { if (!knownPid) s.send({ id: (pidId = ++id), method: 'Runtime.evaluate', params: { expression: 'typeof process === "object" ? process.pid : undefined', returnByValue: true } }); };
+      askPid();
+      timer = setInterval(() => { if (!closing) { s.send({ id: ++id, method: 'Profiler.takePreciseCoverage' }); askPid(); } }, 400);
     };
     sessions.add(s);
   };

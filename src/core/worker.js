@@ -33,6 +33,7 @@ async function handle(m) {
       const mine = engine.trace(m.args[0], {
         onUpdate: (data) => tracer === mine && send({ event: 'update', data }),
         onOutput: (data) => tracer === mine && send({ event: 'output', data }),
+        onPid: (pid) => tracer === mine && send({ event: 'pid', pid }),
         onExit: (data) => { if (tracer !== mine) return; tracer = null; send({ event: 'exit', data }); },
       });
       tracer = mine;

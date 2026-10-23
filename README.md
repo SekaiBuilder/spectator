@@ -205,7 +205,6 @@ Spectator says what it can show and labels the rest. Before trusting it, know th
 - It is **static analysis**: reflection, metaprogramming and values that only exist at runtime can hide connections.
 - Security rules prove a **pattern exists**, not that it is exploitable.
 - JS/TS and Python are the most tested. Other languages resolve calls by name within the same language.
-- **Tested on macOS and Linux.** On Windows, 5 of 115 tests still fail (NestJS map, AI commit attribution and the live trace), so expect rough edges there.
 - It is a **beta** and not yet on the VS Code Marketplace. The English and Japanese texts have not been reviewed by a native speaker.
 
 Found something wrong? [Open an issue](https://github.com/SekaiBuilder/spectator/issues/new/choose): false positives are bugs.

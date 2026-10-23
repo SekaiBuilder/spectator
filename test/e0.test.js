@@ -227,10 +227,11 @@ test('FIX-08: un trace que no arranca publica el error, cierra «En vivo» y per
   const running = attempt('node espera.js');
   await sleep(400);
   await until(() => fs.existsSync(path.join(root, 'pid.txt')));
+  const pid = Number(fs.readFileSync(path.join(root, 'pid.txt'), 'utf8'));
+  await until(() => client.tracePids.has(pid)); // el motor ya sabe qué programa observa
   client.child.kill('SIGKILL');
   assert.equal((await running).error.message, 'analyzer-stopped');
   // El programa que ejecutaba no se queda huérfano.
-  const pid = Number(fs.readFileSync(path.join(root, 'pid.txt'), 'utf8'));
   const alive = () => { try { process.kill(pid, 0); return true; } catch { return false; } };
   await until(() => !alive());
 

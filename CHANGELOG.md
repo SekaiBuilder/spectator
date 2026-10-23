@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+Windows support, checked in CI on Linux, macOS and Windows:
+
+- Line numbers in the NestJS and Next.js map were one line too early in files with Windows line endings (CRLF).
+- AI commit attribution failed when the project path used a short Windows name (`RUNNER~1`) and Git reported the long one.
+- If the analysis process stopped during a live trace, the traced program was left running. It is now stopped on every system; on Windows the engine also tracks the program's own process id, because `cmd.exe` can disappear first.
+- Tests: platform path separators, retried cleanup of temporary folders, and Ctrl+C cancellation is only checked where signals exist.
+
 ## 0.12.1 (2026-10-23)
 
 First public release. Fixes found while analyzing the official
