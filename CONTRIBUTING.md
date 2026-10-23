@@ -40,7 +40,7 @@ False positives are treated as bugs.
 ## Pull requests
 
 - One topic per pull request, with tests.
-- Run `npm test` before pushing; CI runs it on Linux, macOS and Windows.
+- Run `npm test` before pushing; CI runs it on Linux and macOS. Help with Windows support is very welcome.
 - Keep the README in sync with what the code actually does.
 
 By contributing you agree that your contribution is licensed under the Apache License 2.0.
