@@ -1,0 +1,9 @@
+{
+  "name": "restaurante-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proyecto de ejemplo con problemas a propósito para probar Spectator",
+  "main": "src/server.js",
+  "scripts": { "start": "node src/server.js", "test": "node --test test/*.test.js" },
+  "dependencies": { "express": "*" }
+}

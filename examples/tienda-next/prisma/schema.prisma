@@ -1,0 +1,12 @@
+model Cliente {
+  id      Int      @id @default(autoincrement())
+  nombre  String
+  pedidos Pedido[]
+}
+
+model Pedido {
+  id        Int     @id @default(autoincrement())
+  total     Float
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+  clienteId Int
+}

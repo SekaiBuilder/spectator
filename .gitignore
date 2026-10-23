@@ -1,0 +1,22 @@
+# Dependencias: se recuperan con npm install
+node_modules/
+
+# Generados: gramáticas copiadas por scripts/copy-grammars.js (postinstall) y paquetes de la extensión
+grammars/
+*.vsix
+
+# Estado y cachés locales
+.spectator/
+.codegraph/
+.cache/
+*.log
+*.tmp
+.DS_Store
+
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.claude/settings.local.json

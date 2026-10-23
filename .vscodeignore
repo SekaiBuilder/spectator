@@ -1,0 +1,14 @@
+**
+!package.json
+!README.md
+!LICENSE
+!CHANGELOG.md
+!THIRD_PARTY.md
+!src/**
+!media/**
+!grammars/**
+!node_modules/web-tree-sitter/package.json
+!node_modules/web-tree-sitter/tree-sitter.js
+!node_modules/web-tree-sitter/tree-sitter.wasm
+!node_modules/web-tree-sitter/LICENSE
+!package.nls*.json

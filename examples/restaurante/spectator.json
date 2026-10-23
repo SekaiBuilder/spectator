@@ -1,0 +1,7 @@
+{
+  "contract": [
+    { "id": "R-001", "name": "MIN_AGE", "operator": "=", "value": 16, "description": "Edad mínima para registrarse" },
+    { "id": "R-002", "name": "CASH_ENABLED", "operator": "=", "value": false, "description": "No se acepta efectivo" },
+    { "id": "R-003", "name": "MAX_LOGIN_ATTEMPTS", "operator": "=", "value": 5, "description": "Intentos máximos de inicio de sesión" }
+  ]
+}

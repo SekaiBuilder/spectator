@@ -1,0 +1,14 @@
+name: Bug report
+description: Something does not work (crash, wrong screen, command fails)
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened and how to reproduce it
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Spectator, VS Code, Node.js and OS versions

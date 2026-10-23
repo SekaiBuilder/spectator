@@ -1,0 +1,303 @@
+{
+  "name": "spectator",
+  "displayName": "Spectator",
+  "description": "%description%",
+  "version": "0.12.1",
+  "publisher": "spectator",
+  "private": true,
+  "author": "Francesco Catania (https://github.com/SekaiBuilder)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SekaiBuilder/spectator.git"
+  },
+  "homepage": "https://github.com/SekaiBuilder/spectator#readme",
+  "bugs": "https://github.com/SekaiBuilder/spectator/issues",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Linters",
+    "Visualization",
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "bin": {
+    "spectator": "./src/cli.js"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "spectator.open",
+        "title": "%cmd.open%",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "spectator.scan",
+        "title": "%cmd.scan%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "spectator.deepScan",
+        "title": "%cmd.deepScan%"
+      },
+      {
+        "command": "spectator.trace",
+        "title": "%cmd.trace%"
+      },
+      {
+        "command": "spectator.stopTrace",
+        "title": "%cmd.stopTrace%"
+      },
+      {
+        "command": "spectator.setBaseline",
+        "title": "%cmd.setBaseline%"
+      },
+      {
+        "command": "spectator.activity",
+        "title": "%cmd.activity%"
+      },
+      {
+        "command": "spectator.watchApi",
+        "title": "%cmd.watchApi%"
+      },
+      {
+        "command": "spectator.stopApi",
+        "title": "%cmd.stopApi%"
+      },
+      {
+        "command": "spectator.watchLogs",
+        "title": "%cmd.watchLogs%"
+      },
+      {
+        "command": "spectator.live",
+        "title": "%cmd.live%"
+      },
+      {
+        "command": "spectator.stopLive",
+        "title": "%cmd.stopLive%"
+      },
+      {
+        "command": "spectator.chronology",
+        "title": "%cmd.chronology%"
+      },
+      {
+        "command": "spectator.backend",
+        "title": "%cmd.backend%"
+      },
+      {
+        "command": "spectator.selectFolder",
+        "title": "%cmd.selectFolder%"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "spectator",
+          "title": "Spectator",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "spectator": [
+        {
+          "id": "spectator.health",
+          "name": "%view.health%"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "spectator.health",
+        "contents": "%view.welcome%"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "spectator.scan",
+          "when": "view == spectator.health",
+          "group": "navigation@1"
+        },
+        {
+          "command": "spectator.open",
+          "when": "view == spectator.health",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Spectator",
+      "properties": {
+        "spectator.scanOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.scanOnSave%"
+        },
+        "spectator.diagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.diagnostics%"
+        },
+        "spectator.maxFiles": {
+          "type": "integer",
+          "default": 5000,
+          "description": "%cfg.maxFiles%",
+          "minimum": 1
+        },
+        "spectator.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "es",
+            "en",
+            "ja"
+          ],
+          "enumItemLabels": [
+            "Auto",
+            "Español",
+            "English",
+            "日本語"
+          ],
+          "default": "auto",
+          "description": "%cfg.language%"
+        },
+        "spectator.api.target": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.apiTarget%"
+        },
+        "spectator.live.allowWrites": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cfg.live.allowWrites%"
+        },
+        "spectator.live.restartOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cfg.live.restartOnSave%"
+        },
+        "spectator.api.port": {
+          "type": "integer",
+          "default": 8099,
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "%cfg.apiPort%"
+        },
+        "spectator.mode": {
+          "type": "string",
+          "enum": [
+            "simple",
+            "pro"
+          ],
+          "enumItemLabels": [
+            "%cfg.mode.simple%",
+            "%cfg.mode.pro%"
+          ],
+          "default": "simple",
+          "description": "%cfg.mode%"
+        },
+        "spectator.chronology.aiLogs": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.aiLogs%"
+        },
+        "spectator.followActiveFolder": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.followActiveFolder%"
+        }
+      }
+    },
+    "walkthroughs": [
+      {
+        "id": "spectator.start",
+        "title": "%wt.title%",
+        "description": "%wt.desc%",
+        "steps": [
+          {
+            "id": "analizar",
+            "title": "%wt.analizar.title%",
+            "description": "%wt.analizar.desc%",
+            "media": {
+              "image": "media/walkthrough/analizar.svg",
+              "altText": "%wt.analizar.title%"
+            },
+            "completionEvents": [
+              "onCommand:spectator.scan"
+            ]
+          },
+          {
+            "id": "resumen",
+            "title": "%wt.resumen.title%",
+            "description": "%wt.resumen.desc%",
+            "media": {
+              "image": "media/walkthrough/resumen.svg",
+              "altText": "%wt.resumen.title%"
+            },
+            "completionEvents": [
+              "onCommand:spectator.open"
+            ]
+          },
+          {
+            "id": "api",
+            "title": "%wt.api.title%",
+            "description": "%wt.api.desc%",
+            "media": {
+              "image": "media/walkthrough/vivo.svg",
+              "altText": "%wt.api.title%"
+            },
+            "completionEvents": [
+              "onCommand:spectator.watchApi"
+            ]
+          },
+          {
+            "id": "reglas",
+            "title": "%wt.reglas.title%",
+            "description": "%wt.reglas.desc%",
+            "media": {
+              "image": "media/walkthrough/reglas.svg",
+              "altText": "%wt.reglas.title%"
+            },
+            "completionEvents": [
+              "onCommand:spectator.open"
+            ]
+          },
+          {
+            "id": "vivo",
+            "title": "%wt.vivo.title%",
+            "description": "%wt.vivo.desc%",
+            "media": {
+              "image": "media/walkthrough/vivo.svg",
+              "altText": "%wt.vivo.title%"
+            },
+            "completionEvents": [
+              "onCommand:spectator.trace"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "grammars": "node scripts/copy-grammars.js",
+    "postinstall": "node scripts/copy-grammars.js",
+    "test": "node --liftoff-only --test test/*.test.js",
+    "test:vscode": "node scripts/test-vscode.js",
+    "benchmark": "node --liftoff-only scripts/benchmark.js",
+    "scan": "node src/cli.js scan",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "web-tree-sitter": "0.22.6"
+  },
+  "devDependencies": {
+    "tree-sitter-wasms": "0.1.13",
+    "@vscode/vsce": "^3.2.0"
+  }
+}
