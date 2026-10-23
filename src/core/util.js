@@ -140,9 +140,18 @@ function stateDir(root) {
 }
 
 /** Ruta de `target` relativa a `root`, o null si queda fuera. Compara carpetas completas: «/a/proyecto-otro» no está dentro de «/a/proyecto». */
+/** Termina un proceso y sus hijos: en Windows con taskkill /T, en el resto a todo su grupo (se lanzan con detached). */
+function killTree(pid, signal = 'SIGTERM') {
+  if (!pid) return;
+  try {
+    if (process.platform === 'win32') require('child_process').spawn('taskkill', ['/pid', String(pid), '/T', '/F'], { stdio: 'ignore' });
+    else process.kill(-pid, signal);
+  } catch { /* ya terminó */ }
+}
+
 function relativeInside(root, target) {
   const rel = path.relative(root, target);
   return !rel || rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel) ? null : rel;
 }
 
-module.exports = { readJsonState, quarantine, withLock, relativeInside, hash, globToRegex, readJson, writeJson, loadConfig, updateConfig, stateDir, DEFAULT_CONFIG };
+module.exports = { readJsonState, quarantine, withLock, killTree, relativeInside, hash, globToRegex, readJson, writeJson, loadConfig, updateConfig, stateDir, DEFAULT_CONFIG };

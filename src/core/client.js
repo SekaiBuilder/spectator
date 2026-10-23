@@ -2,6 +2,7 @@
 // Misma interfaz que Engine, pero el trabajo ocurre en un proceso hijo (ver worker.js).
 const { fork } = require('child_process');
 const path = require('path');
+const { killTree } = require('./util');
 
 // Las gramáticas grandes (Swift) agotan la memoria del compilador optimizador de WebAssembly
 // en algunas versiones de V8; con el compilador base no ocurre.
@@ -14,6 +15,7 @@ class EngineClient {
     this.pending = new Map();
     this.seq = 0;
     this.traceHandlers = null;
+    this.tracePid = null;
     this.useFlags = true;
     this.disposed = false;
   }
@@ -27,9 +29,10 @@ class EngineClient {
     child.on('message', (m) => {
       if (m.event) {
         const h = this.traceHandlers || {};
-        if (m.event === 'update' && h.onUpdate) h.onUpdate(m.data);
+        if (m.event === 'pid') this.tracePid = m.pid;
+        else if (m.event === 'update' && h.onUpdate) h.onUpdate(m.data);
         else if (m.event === 'output' && h.onOutput) h.onOutput(m.data);
-        else if (m.event === 'exit') { this.traceHandlers = null; h.onExit && h.onExit(m.data); }
+        else if (m.event === 'exit') { this.traceHandlers = null; this.tracePid = null; h.onExit && h.onExit(m.data); }
         return;
       }
       const p = this.pending.get(m.id);
@@ -44,7 +47,9 @@ class EngineClient {
       if (this.useFlags && Date.now() - started < 1500) this.useFlags = false;
       for (const p of this.pending.values()) p.reject(new Error('analyzer-stopped'));
       this.pending.clear();
-      // Una ejecución en vivo no puede terminar si su proceso ya no existe: se avisa para que nadie quede esperando.
+      // Una ejecución en vivo no puede terminar si su proceso ya no existe: se avisa para que nadie quede esperando,
+      // y el programa que ejecutaba no se queda huérfano.
+      this.stopOrphan();
       this.failTrace(this.traceHandlers, new Error('analyzer-stopped'));
     };
     child.on('exit', gone);
@@ -83,6 +88,11 @@ class EngineClient {
     this.call('trace', command).catch((e) => this.failTrace(handlers, e));
     return { stop: () => this.child && this.call('stopTrace').catch(() => {}) };
   }
+  /** El motor ya no puede detener el programa que lanzó: se termina desde aquí. */
+  stopOrphan() {
+    if (this.tracePid) killTree(this.tracePid, 'SIGKILL');
+    this.tracePid = null;
+  }
   /** Cierre definitivo: ninguna solicitud ni ejecución en vivo queda esperando una respuesta que ya no llegará. */
   dispose() {
     if (this.disposed) return;
@@ -92,6 +102,8 @@ class EngineClient {
     for (const p of this.pending.values()) p.reject(new Error('analyzer-disposed'));
     this.pending.clear();
     this.failTrace(this.traceHandlers, new Error('analyzer-disposed'));
+    // En Windows kill() no deja al motor detener su ejecución en vivo.
+    this.stopOrphan();
     if (c) c.kill();
   }
 }

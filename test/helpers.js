@@ -11,7 +11,8 @@ const ROOT = path.join(__dirname, '..');
 
 function project(t, files) {
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'spectator-e0-')));
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  // En Windows un proceso recién terminado puede retener la carpeta unos instantes.
+  t.after(() => fs.rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 }));
   for (const [file, source] of Object.entries({ 'README.md': 'Fixture', ...files })) {
     fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     fs.writeFileSync(path.join(root, file), source);

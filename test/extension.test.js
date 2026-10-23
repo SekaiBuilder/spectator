@@ -73,7 +73,7 @@ test('extensión: activación, panel, guardar, confirmar y flujo en vivo', async
   assert.strictEqual(data.verdict, 'fail');
 
   await S.onMessage({ type: 'open', file: 'src/config.js', line: 4 });
-  assert.ok(S.opened.doc.file.endsWith('src/config.js'));
+  assert.ok(S.opened.doc.file.endsWith(path.join('src', 'config.js')));
   S.opened = null;
   await S.onMessage({ type: 'open', file: '../../etc/passwd', line: 1 });
   assert.strictEqual(S.opened, null, 'no abre rutas fuera del proyecto');

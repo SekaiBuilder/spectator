@@ -186,6 +186,7 @@ function startTrace(root, command, irs, handlers = {}) {
   child.on('error', (e) => finish(null, null, e));
 
   return {
+    pid: child.pid,
     stop() {
       for (const s of sessions) s.close();
       try { if (process.platform === 'win32') spawn('taskkill', ['/pid', String(child.pid), '/T', '/F']); else process.kill(-child.pid, 'SIGTERM'); } catch { try { child.kill(); } catch { /* ya terminó */ } }

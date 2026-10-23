@@ -36,6 +36,7 @@ async function handle(m) {
         onExit: (data) => { if (tracer !== mine) return; tracer = null; send({ event: 'exit', data }); },
       });
       tracer = mine;
+      send({ event: 'pid', pid: mine.pid });
     } else throw new Error(`unknown method: ${m.method}`);
     send({ id: m.id, result });
   } catch (e) {

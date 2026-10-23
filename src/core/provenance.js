@@ -169,7 +169,12 @@ const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); retur
  */
 function aiEdits(root, { since = startOfToday(), home = os.homedir(), logs = true } = {}) {
   const out = [];
-  const inside = (abs) => { try { return relativeInside(root, abs) || relativeInside(fs.realpathSync(root), abs); } catch { return relativeInside(root, abs); } };
+  // En Windows la carpeta puede llegar con nombre corto (RUNNER~1) y Git la devuelve con el largo: se comparan rutas reales.
+  const real = (p) => { try { return fs.realpathSync.native(p); } catch { return null; } };
+  const realRoot = real(root);
+  // Un archivo borrado no tiene ruta real: se usa la de su carpeta.
+  const realOf = (abs) => real(abs) || (real(path.dirname(abs)) ? path.join(real(path.dirname(abs)), path.basename(abs)) : abs);
+  const inside = (abs) => relativeInside(root, abs) || (realRoot && (relativeInside(realRoot, abs) || relativeInside(realRoot, realOf(abs))));
   const commands = [];
   const keep = (e, via) => {
     const t = Date.parse(e.at);

@@ -98,7 +98,8 @@ function indexJs(root) {
       if (brace === -1) continue;
       const blk = balanced(src, brace);
       const params = sig ? sig.text : (paren !== -1 && paren < brace ? balanced(src, paren).text : '');
-      if (!f.fns.has(name)) f.fns.set(name, { name, line: lineAt(src, m.index), body: blk.text, params, returns, exported: /^\s*export/.test(m[0]), async: /async/.test(m[0]), method: !!m[3] });
+      // Un método de clase empieza en «^\s+»; con CRLF, ^ también encaja tras \r y la coincidencia empezaría una línea antes.
+      if (!f.fns.has(name)) f.fns.set(name, { name, line: lineAt(src, m.index + m[0].search(/\S/)), body: blk.text, params, returns, exported: /^\s*export/.test(m[0]), async: /async/.test(m[0]), method: !!m[3] });
     }
     for (const m of src.matchAll(/(?:export\s+)?class\s+(\w+)/g)) {
       const brace = src.indexOf('{', m.index);

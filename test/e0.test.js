@@ -59,14 +59,17 @@ test('FIX-03: trace termina con el resultado del programa y distingue cancelaci�
   assert.equal(cli('node', 'bien.js').status, 0);
   assert.equal(cli('node', 'no-existe.js').status, 1, 'un programa que no arranca tampoco es un éxito');
 
-  // Cancelar con Ctrl+C detiene el programa y sale con 130.
-  const child = childProcess.spawn(process.execPath, ['--liftoff-only', path.join(ROOT, 'src/cli.js'), 'trace', root, '--', 'node', 'espera.js'], { stdio: ['ignore', 'pipe', 'ignore'] });
-  let output = '';
-  child.stdout.on('data', (d) => { output += d; });
-  const exit = new Promise((resolve) => child.on('exit', (code, signal) => resolve({ code, signal })));
-  await until(() => output.includes('listo'));
-  child.kill('SIGINT');
-  assert.deepEqual(await exit, { code: 130, signal: null });
+  // Cancelar con Ctrl+C detiene el programa y sale con 130. Windows no tiene señales: kill('SIGINT') termina el
+  // proceso sin avisarle, así que allí solo un Ctrl+C real en la consola lo comprueba.
+  if (process.platform !== 'win32') {
+    const child = childProcess.spawn(process.execPath, ['--liftoff-only', path.join(ROOT, 'src/cli.js'), 'trace', root, '--', 'node', 'espera.js'], { stdio: ['ignore', 'pipe', 'ignore'] });
+    let output = '';
+    child.stdout.on('data', (d) => { output += d; });
+    const exit = new Promise((resolve) => child.on('exit', (code, signal) => resolve({ code, signal })));
+    await until(() => output.includes('listo'));
+    child.kill('SIGINT');
+    assert.deepEqual(await exit, { code: 130, signal: null });
+  }
 
   // Si el comando no llega a iniciarse, se informa el error y no queda guardado como una ejecución.
   const gone = path.join(root, 'no-existe');
@@ -210,7 +213,7 @@ test('FIX-07: la pertenencia al proyecto se decide por carpetas y rutas reales, 
 });
 
 test('FIX-08: un trace que no arranca publica el error, cierra «En vivo» y permite reintentar', async (t) => {
-  const root = project(t, { 'lib.js': 'exports.f = function f() { return 1; };\n', 'run.js': "require('./lib').f();\n", 'espera.js': 'setTimeout(() => {}, 60000);\n' });
+  const root = project(t, { 'lib.js': 'exports.f = function f() { return 1; };\n', 'run.js': "require('./lib').f();\n", 'espera.js': "require('fs').writeFileSync('pid.txt', String(process.pid));\nsetTimeout(() => {}, 60000);\n" });
   const client = new EngineClient(root);
   t.after(() => client.dispose());
   await client.scan();
@@ -223,8 +226,13 @@ test('FIX-08: un trace que no arranca publica el error, cierra «En vivo» y per
   // El proceso del motor desaparece con una ejecución en curso.
   const running = attempt('node espera.js');
   await sleep(400);
+  await until(() => fs.existsSync(path.join(root, 'pid.txt')));
   client.child.kill('SIGKILL');
   assert.equal((await running).error.message, 'analyzer-stopped');
+  // El programa que ejecutaba no se queda huérfano.
+  const pid = Number(fs.readFileSync(path.join(root, 'pid.txt'), 'utf8'));
+  const alive = () => { try { process.kill(pid, 0); return true; } catch { return false; } };
+  await until(() => !alive());
 
   // Reintentar funciona con un proceso nuevo.
   await client.scan();
