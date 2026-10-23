@@ -12,7 +12,7 @@ because people act on it. Please keep that in mind in every change.
 
 ## Development
 
-Requires Node.js 20 or newer.
+Requires Node.js 22 or newer (the CLI alone runs on Node.js 20).
 
 ```bash
 npm install          # also copies the tree-sitter grammars into grammars/
