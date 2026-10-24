@@ -17,7 +17,7 @@ It reads your code, maps your backend endpoint by endpoint and sorts every findi
 ![Node](https://img.shields.io/badge/node-20%2B-339933?logo=nodedotjs&logoColor=white)
 ![Languages](https://img.shields.io/badge/UI-English%20·%20Español%20·%20日本語-blueviolet)
 
-[Install](#install) · [What it shows](#what-it-shows) · [Catching AI mistakes](#catching-the-mistakes-ai-makes) · [Terminal and CI](#in-the-terminal-and-in-ci) · [Try it yourself](#try-it-on-a-real-project) · [Contributing](#contributing)
+[Install](#install) · [What it shows](#what-it-shows) · [Catching AI mistakes](#catching-the-mistakes-ai-makes) · [Terminal and CI](#in-the-terminal-and-in-ci) · [Try it yourself](#try-it-on-a-real-project) · [Contributing](#contributing) · [Español](#en-español)
 
 </div>
 
@@ -222,3 +222,16 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md). Security issues go through [SECUR
 ---
 
 <sub>Screenshots show the official FastAPI full-stack template (MIT) analyzed by Spectator. FastAPI is a project by Sebastián Ramírez; Spectator is not affiliated with it.</sub>
+
+## En español
+
+**Spectator** es una extensión de VS Code y una herramienta de terminal que te explica tu proyecto en palabras sencillas.
+Separa cada aviso en **fallo demostrado**, **riesgo** o **decisión que solo tú puedes tomar**, dibuja el mapa de tu backend
+endpoint por endpoint (FastAPI, Flask, Django, Express, NestJS, Next.js y Spring Boot) y detecta los errores típicos del código
+escrito con IA. Funciona sin IA, sin cuenta y sin nube: el código no sale de tu ordenador.
+
+- **Instalar:** descarga el `.vsix` de la [última versión](https://github.com/SekaiBuilder/spectator/releases/latest) y en VS Code abre *Extensiones → … → Instalar desde VSIX*.
+- **Idioma:** la interfaz está en español, inglés y japonés (*Ajustes → Spectator → Language*).
+- **Desde el código:** `npm install` y `node src/cli.js scan carpeta --html`.
+
+Las capturas y los detalles están arriba, en inglés. Las incidencias y sugerencias en español también son bienvenidas en [Issues](https://github.com/SekaiBuilder/spectator/issues).
